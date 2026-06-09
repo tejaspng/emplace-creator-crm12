@@ -467,7 +467,27 @@ function App(){
     })();
   },[]);
 
-  const saveCreators=async l=>{setCreators(l);await store.set('emplace_creators_v2',l)};
+  const saveCreators = async (l) => {
+  setCreators(l);
+
+  try {
+    await store.set('emplace_creators_v2', l);
+
+    const { error } = await supabaseClient
+      .from('creators')
+      .insert([
+        {
+          id: Date.now().toString(),
+          name: 'TEST CREATOR'
+        }
+      ]);
+
+    console.log('SUPABASE INSERT ERROR:', error);
+
+  } catch (e) {
+    console.error(e);
+  }
+};
   const saveUsers=async l=>{setUsers(l);await store.set('emplace_users',l)};
   const toast2=(msg,icon)=>{setToast({msg,icon});setTimeout(()=>setToast(null),2600)};
 
