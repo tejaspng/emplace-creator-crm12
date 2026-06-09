@@ -106,13 +106,13 @@ const SUPABASE_URL = "https://fnrtnuqdhhdmhliplqfn.supabase.co";
 
 const SUPABASE_KEY = "sb_publishable_7DTrNMpn_9qICfwlVYtMEg_eog8XDcJ";
 
-const supabase = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
 async function testSupabase() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('creators')
     .select('*')
     .limit(1);
