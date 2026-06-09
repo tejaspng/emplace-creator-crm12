@@ -596,6 +596,9 @@ function App(){
     ),
     h('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},mainContent),
     showAdd&&h(CreatorModal,{onSave:async c=>{
+  onSave:async c=>{
+  console.log('CREATOR OBJECT', c);
+
   const { error } = await supabaseClient
     .from('creators')
     .insert([c]);
