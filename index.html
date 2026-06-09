@@ -595,7 +595,26 @@ function App(){
       )
     ),
     h('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},mainContent),
-    showAdd&&h(CreatorModal,{onSave:async c=>{const n=[...creators,c];await saveCreators(n);setShowAdd(false);toast2(c.name+' added to database')},onCancel:()=>setShowAdd(false),currentUser:user,title:'Add Creator'}),
+    showAdd&&h(CreatorModal,{onSave:async c=>{
+  const { error } = await supabaseClient
+    .from('creators')
+    .insert([c]);
+
+  if(error){
+    console.error(error);
+    alert(error.message);
+    return;
+  }
+
+  const { data } = await supabaseClient
+    .from('creators')
+    .select('*');
+
+  setCreators(data || []);
+
+  setShowAdd(false);
+  toast2(c.name + ' added to database');
+},onCancel:()=>setShowAdd(false),currentUser:user,title:'Add Creator'}),
     editC&&h(CreatorModal,{initial:editC,onSave:async c=>{const n=creators.map(x=>x.id===c.id?c:x);await saveCreators(n);setEditC(null);setViewC(c);toast2('Creator updated')},onCancel:()=>setEditC(null),currentUser:user,title:'Edit — '+editC.name}),
     viewC&&h(CreatorDetail,{creator:viewC,onEdit:()=>{setEditC(viewC);setViewC(null)},onDelete:async()=>{if(!confirm('Delete '+viewC.name+'? This cannot be undone.'))return;const n=creators.filter(c=>c.id!==viewC.id);await saveCreators(n);setViewC(null);toast2('Creator deleted','ti-trash')},onClose:()=>setViewC(null)}),
     toast&&h(Toast,{...toast,onDone:()=>setToast(null)})
