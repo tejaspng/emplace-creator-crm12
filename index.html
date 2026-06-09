@@ -455,9 +455,15 @@ function App(){
 
   useEffect(()=>{
     (async()=>{
-      const c=await store.get('emplace_creators_v2');
+      const { data: creatorsData, error } = await supabaseClient
+  .from('creators')
+  .select('*');
       const u=await store.get('emplace_users');
-      if(c)setCreators(c);
+      
+      if (!error && creatorsData) {
+  setCreators(creatorsData);
+}
+      
       const allUsers=u||[ADMIN_SEED];
       setUsers(allUsers);
       if(!u)await store.set('emplace_users',[ADMIN_SEED]);
