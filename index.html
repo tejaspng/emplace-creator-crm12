@@ -597,11 +597,53 @@ function App(){
     h('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},mainContent),
     showAdd&&h(CreatorModal,{
   onSave:async c=>{
-  console.log('CREATOR OBJECT', c);
 
-  const { error } = await supabaseClient
-    .from('creators')
-    .insert([c]);
+const dbCreator = {
+  id: c.id || Date.now().toString(),
+
+  name: c.name,
+  handle: c.handle,
+  email: c.email,
+  whatsapp: c.whatsapp,
+
+  manager_name: c.managerName,
+  manager_contact: c.managerContact,
+
+  primary_platform: c.primaryPlatform,
+
+  followers_ig: c.followersIG || null,
+  followers_yt: c.followersYT || null,
+  followers_other: c.followersOther || null,
+
+  audience_age: c.audienceAge,
+  audience_gender: c.audienceGender,
+  audience_geo: c.audienceGeo,
+
+  price_reel: c.priceReel || null,
+  price_collab_reel: c.priceCollabReel || null,
+  price_story: c.priceStory || null,
+  price_post: c.pricePost || null,
+
+  price_yt_dedicated: c.priceYTDedicated || null,
+  price_yt_integrated: c.priceYTIntegrated || null,
+  price_yt_short: c.priceYTShort || null,
+
+  status: c.status,
+  notes: c.notes,
+
+  worked_with: c.workedWith,
+  rating: c.rating || null,
+
+  niches: c.niche || [],
+  platforms: c.platforms || {},
+
+  added_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+};
+
+const { error } = await supabaseClient
+  .from('creators')
+  .insert([dbCreator]);
 
   if(error){
     console.error(error);
