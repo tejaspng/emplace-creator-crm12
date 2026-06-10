@@ -466,6 +466,10 @@ if (!error && creatorsData) {
   const formattedCreators = creatorsData.map(c => ({
     ...c,
 
+    addedBy: c.added_by,
+    addedAt: c.added_at,
+    updatedAt: c.updated_at,
+
     managerName: c.manager_name,
     managerContact: c.manager_contact,
 
@@ -670,6 +674,7 @@ const dbCreator = {
   platforms: c.platforms || {},
 
   added_at: new Date().toISOString(),
+  added_by: user?.name || user?.username || 'Unknown User',
   updated_at: new Date().toISOString()
 };
 
