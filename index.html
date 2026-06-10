@@ -660,7 +660,69 @@ const { error } = await supabaseClient
   setShowAdd(false);
   toast2(c.name + ' added to database');
 },onCancel:()=>setShowAdd(false),currentUser:user,title:'Add Creator'}),
-    editC&&h(CreatorModal,{initial:editC,onSave:async c=>{const n=creators.map(x=>x.id===c.id?c:x);await saveCreators(n);setEditC(null);setViewC(c);toast2('Creator updated')},onCancel:()=>setEditC(null),currentUser:user,title:'Edit — '+editC.name}),
+    editC&&h(CreatorModal,{initial:editC,onSave:async c=>{
+
+  const dbCreator = {
+    name: c.name,
+    handle: c.handle,
+    email: c.email,
+    whatsapp: c.whatsapp,
+
+    manager_name: c.managerName,
+    manager_contact: c.managerContact,
+
+    primary_platform: c.primaryPlatform,
+
+    followers_ig: c.followersIG || null,
+    followers_yt: c.followersYT || null,
+    followers_other: c.followersOther || null,
+
+    audience_age: c.audienceAge,
+    audience_gender: c.audienceGender,
+    audience_geo: c.audienceGeo,
+
+    price_reel: c.priceReel || null,
+    price_collab_reel: c.priceCollabReel || null,
+    price_story: c.priceStory || null,
+    price_post: c.pricePost || null,
+
+    price_yt_dedicated: c.priceYTDedicated || null,
+    price_yt_integrated: c.priceYTIntegrated || null,
+    price_yt_short: c.priceYTShort || null,
+
+    status: c.status,
+    notes: c.notes,
+
+    worked_with: c.workedWith,
+    rating: c.rating || null,
+
+    niches: c.niche || [],
+    platforms: c.platforms || {},
+
+    updated_at: new Date().toISOString()
+  };
+
+  const { error } = await supabaseClient
+    .from('creators')
+    .update(dbCreator)
+    .eq('id', c.id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  const { data } = await supabaseClient
+    .from('creators')
+    .select('*');
+
+  setCreators(data || []);
+
+  setEditC(null);
+  setViewC(c);
+
+  toast2('Creator updated');
+},onCancel:()=>setEditC(null),currentUser:user,title:'Edit — '+editC.name}),
     viewC&&h(CreatorDetail,{creator:viewC,onEdit:()=>{setEditC(viewC);setViewC(null)},onDelete:async()=>{if(!confirm('Delete '+viewC.name+'? This cannot be undone.'))return;const n=creators.filter(c=>c.id!==viewC.id);await saveCreators(n);setViewC(null);toast2('Creator deleted','ti-trash')},onClose:()=>setViewC(null)}),
     toast&&h(Toast,{...toast,onDone:()=>setToast(null)})
   );
