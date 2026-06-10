@@ -760,7 +760,64 @@ const { error } = await supabaseClient
 
   toast2('Creator updated');
 },onCancel:()=>setEditC(null),currentUser:user,title:'Edit — '+editC.name}),
-    viewC&&h(CreatorDetail,{creator:viewC,onEdit:()=>{setEditC(viewC);setViewC(null)},onDelete:async()=>{if(!confirm('Delete '+viewC.name+'? This cannot be undone.'))return;const n=creators.filter(c=>c.id!==viewC.id);await saveCreators(n);setViewC(null);toast2('Creator deleted','ti-trash')},onClose:()=>setViewC(null)}),
+    viewC&&h(CreatorDetail,{creator:viewC,onEdit:()=>{setEditC(viewC);setViewC(null)},onDelete:async()=>{
+
+  if(!confirm('Delete '+viewC.name+'? This cannot be undone.')) return;
+
+  const { error } = await supabaseClient
+    .from('creators')
+    .delete()
+    .eq('id', viewC.id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  const { data } = await supabaseClient
+    .from('creators')
+    .select('*');
+
+  const formattedCreators = (data || []).map(c => ({
+    ...c,
+
+    addedBy: c.added_by,
+    addedAt: c.added_at,
+    updatedAt: c.updated_at,
+
+    managerName: c.manager_name,
+    managerContact: c.manager_contact,
+
+    primaryPlatform: c.primary_platform,
+
+    followersIG: c.followers_ig,
+    followersYT: c.followers_yt,
+    followersOther: c.followers_other,
+
+    audienceAge: c.audience_age,
+    audienceGender: c.audience_gender,
+    audienceGeo: c.audience_geo,
+
+    priceReel: c.price_reel,
+    priceCollabReel: c.price_collab_reel,
+    priceStory: c.price_story,
+    pricePost: c.price_post,
+
+    priceYTDedicated: c.price_yt_dedicated,
+    priceYTIntegrated: c.price_yt_integrated,
+    priceYTShort: c.price_yt_short,
+
+    workedWith: c.worked_with,
+
+    niche: c.niches
+  }));
+
+  setCreators(formattedCreators);
+
+  setViewC(null);
+
+  toast2('Creator deleted','ti-trash');
+},onClose:()=>setViewC(null)}),
     toast&&h(Toast,{...toast,onDone:()=>setToast(null)})
   );
 }
