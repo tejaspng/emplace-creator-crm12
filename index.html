@@ -110,19 +110,6 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
-
-async function testSupabase() {
-  const { data, error } = await supabaseClient
-    .from('creators')
-    .select('*')
-    .limit(1);
-
-  console.log('SUPABASE TEST');
-  console.log(data);
-  console.log(error);
-}
-
-testSupabase();
   
 const h=React.createElement;
 
@@ -511,7 +498,6 @@ if (!error && creatorsData) {
 
   const saveCreators=async l=>{
   setCreators(l);
-  await store.set('emplace_creators_v2',l);
 };
   const saveUsers=async l=>{setUsers(l);await store.set('emplace_users',l)};
   const toast2=(msg,icon)=>{setToast({msg,icon});setTimeout(()=>setToast(null),2600)};
