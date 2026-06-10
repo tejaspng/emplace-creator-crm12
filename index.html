@@ -458,10 +458,42 @@ function App(){
       const { data: creatorsData, error } = await supabaseClient
   .from('creators')
   .select('*');
-      const u=await store.get('emplace_users');
-      
-      if (!error && creatorsData) {
-  setCreators(creatorsData);
+
+const u=await store.get('emplace_users');
+
+if (!error && creatorsData) {
+
+  const formattedCreators = creatorsData.map(c => ({
+    ...c,
+
+    managerName: c.manager_name,
+    managerContact: c.manager_contact,
+
+    primaryPlatform: c.primary_platform,
+
+    followersIG: c.followers_ig,
+    followersYT: c.followers_yt,
+    followersOther: c.followers_other,
+
+    audienceAge: c.audience_age,
+    audienceGender: c.audience_gender,
+    audienceGeo: c.audience_geo,
+
+    priceReel: c.price_reel,
+    priceCollabReel: c.price_collab_reel,
+    priceStory: c.price_story,
+    pricePost: c.price_post,
+
+    priceYTDedicated: c.price_yt_dedicated,
+    priceYTIntegrated: c.price_yt_integrated,
+    priceYTShort: c.price_yt_short,
+
+    workedWith: c.worked_with,
+
+    niche: c.niches
+  }));
+
+  setCreators(formattedCreators);
 }
       
       const allUsers=u||[ADMIN_SEED];
